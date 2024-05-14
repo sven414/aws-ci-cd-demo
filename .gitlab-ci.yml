@@ -1,0 +1,77 @@
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH != "main" && $CI_PIPELINE_SOURCE != "merge_request_event"
+      when: never
+    - when: always
+
+stages:
+  - test_setup
+  - test_code
+  - test_doc
+
+variables:
+  PREFIX: "$API_I1"
+  BASE_SETUP: "${PREFIX}_SETUP"
+  BASE_TEST: "${PREFIX}_TEST"
+  BASE_DOC: "${PREFIX}_DOC"
+
+setup_tests:
+  stage: test_setup
+  tags:
+    - docker
+    - linux
+    - shared
+  image: python:3.12.0-alpine3.18
+  script:
+    - "apk add git"
+    - "git clone $BASE_SETUP .cloned_tests_setup"
+    - cp -rf .cloned_tests_setup/* .
+    - pip install poetry
+    - poetry install
+    - poetry run python test.py
+  artifacts:
+    when: always
+    paths:
+      - result/*.xml
+    reports:
+      junit: result/*.xml
+
+java_tests:
+  stage: test_code
+  tags:
+    - docker
+    - linux
+    - shared
+  image: maven:3.9.4-amazoncorretto-21-debian
+  script:
+    - "apt update && apt install -y git"
+    - "git clone $BASE_TEST .cloned_tests"
+    - cp -rf .cloned_tests/* .
+    - mvn compile test --batch-mode
+  artifacts:
+    when: always
+    paths:
+      - target/surefire-reports/*.xml
+    reports:
+      junit: target/surefire-reports/*.xml
+
+python_tests:
+  stage: test_doc
+  tags:
+    - docker
+    - linux
+    - shared
+  image: python:3.12.0-alpine3.18
+  script:
+    - "apk add git"
+    - "git clone $BASE_DOC .cloned_tests_doc"
+    - cp -rf .cloned_tests_doc/* .
+    - pip install poetry
+    - poetry install
+    - poetry run python main.py
+  artifacts:
+    when: always
+    paths:
+      - result/*.xml
+    reports:
+      junit: result/*.xml
