@@ -25,31 +25,34 @@ public class BookService {
     }
 
     public List<Book> getAllBooks() {
-        // TODO: Skriv din kod här
-        return null;
+        return bookRepository.findAll();
     }
 
     public Optional<Book> getBookById(Long id) {
-        // TODO: Skriv din kod här
-        return null;
+        return bookRepository.findById(id);
     }
 
     public Book addBook(Book book) {
-        // TODO: Skriv din kod här
-        return null;
+        return bookRepository.save(book);
     }
 
     public Book updateBook(Long id, Book bookDetails) {
-        // TODO: Skriv din kod här
-        return null;
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id " + id));
+
+        book.setTitle(bookDetails.getTitle());
+        book.setAuthor(bookDetails.getAuthor());
+        book.setIsbn(bookDetails.getIsbn());
+
+        return bookRepository.save(book);
     }
 
     public void deleteBook(Long id) {
-        // TODO: Skriv din kod här
+        bookRepository.deleteById(id);
     }
 
     private Book getBookOrFail(Long id) {
-        // TODO: Skriv din kod här
-        return null;
+        return bookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id " + id));
     }
 }
