@@ -1,6 +1,7 @@
 package se.dsve.book.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.dsve.book.exceptions.ResourceNotFoundException;
@@ -27,31 +28,38 @@ public class BookController {
 
     @GetMapping
     public List<Book> getAllBooks() {
-        // TODO: Skriv din kod här
-        return null;
+        return bookService.getAllBooks();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Book> getBookById(@PathVariable Long id) {
-        // TODO: Skriv din kod här
-        return null;
+        return bookService.getBookById(id)
+                .map(book -> new ResponseEntity<>(book, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
     public Book addBook(@RequestBody Book book) {
-        // TODO: Skriv din kod här
-        return null;
+        return bookService.addBook(book);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
-        // TODO: Skriv din kod här
-        return null;
+        try {
+            Book updatedBook = bookService.updateBook(id, bookDetails);
+            return new ResponseEntity<>(updatedBook, HttpStatus.OK);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
-        // TODO: Skriv din kod här
-        return null;
+        try {
+            bookService.deleteBook(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (ResourceNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
