@@ -28,8 +28,12 @@ public class BookService {
         return bookRepository.findAll();
     }
 
-    public Book getBookById(Long id) {
-        return getBookOrFail(id);
+    public Optional<Book> getBookById(Long id) {
+        try {
+            return Optional.of(getBookOrFail(id));
+        } catch (ResourceNotFoundException e) {
+            return Optional.empty();
+        }
     }
 
     public Book addBook(Book book) {
