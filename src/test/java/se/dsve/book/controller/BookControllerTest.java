@@ -111,4 +111,22 @@ class BookControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void test_updateBook_bookNotFound() throws Exception {
+        Long invalidId = 999L;
+        Book bookDetails = new Book();
+        bookDetails.setTitle("Updated Title");
+        bookDetails.setAuthor("Updated Author");
+        bookDetails.setIsbn("1234567890");
+
+        when(bookService.updateBook(eq(invalidId), any(Book.class)))
+                .thenThrow(new ResourceNotFoundException("Book not found with id " + invalidId));
+
+        mockMvc.perform(put("/api/books/" + invalidId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Updated Title\",\"author\":\"Updated Author\",\"isbn\":\"1234567890\"}"))
+                .andExpect(status().isNotFound());
+    }
+
 }
