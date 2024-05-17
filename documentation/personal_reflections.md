@@ -10,9 +10,8 @@ Att skapa ett CRUD för Rest-API i Java för 'Book'-relaterade uppgifter med Spr
 --- Skriv ovanför och ta inte bort denna raden ---
 
 ### Hur uppfattade du uppgiften initialt?
-
+Att slutföra metoderna i klasserna och skapa enhettester. Dessutom en generated-requests.http.
 --- Skriv ovanför och ta inte bort denna raden ---
-Att slutföra metoderna i klasserna och skapa test. 
 ## Planering och genomförande
 
 ### Hur planerade du att lösa uppgiften?
@@ -20,17 +19,17 @@ Jag planerade att följa ordningen i requirements.md och skapa testen i samband 
 --- Skriv ovanför och ta inte bort denna raden ---
 
 ### Vilka steg tog du för att lösa uppgiften, skiljer sig ditt utförande från tidigare uppgifter?
-Nej, jag följde samma steg som jag brukar göra med undantag för generated-requests.http som jagg inte gjort förut. 
+Nej, jag följde samma steg som jag brukar göra med undantag för generated-requests.http som jag inte gjort förut.
 --- Skriv ovanför och ta inte bort denna raden ---
 
 ## Utmaningar och lösningar
 
 ### Vilka utmaningar stötte du på under projektet?
-När jag generade generated-requests.http så hamnade de inte i filen och kom därför inte med i commiten. Det tog en stund att felsöka och får det rätt. 
+När jag generade generated-requests.http så hamnade de inte i filen och kom därför inte med i commiten.
 --- Skriv ovanför och ta inte bort denna raden ---
 
 ### Hur löste du dessa utmaningar?
-Jag gjorde om requesten och kopierade dem en och en till rätt fil.
+Felsökning gav vid handet att det hamnade i en temp-fil. Jag gjorde om requesten och kopierade dem en och en till rätt fil.
 --- Skriv ovanför och ta inte bort denna raden ---
 
 ## Reflektion och utvärdering
@@ -40,5 +39,5 @@ Jag lärde mig skapa generated-requests.http och läste också på vad man har d
 --- Skriv ovanför och ta inte bort denna raden ---
 
 ### Vilka möjligheter ser du för framtida projekt baserat på denna erfarenhet?
-
+Jag ser möjligheter att använda generated-requests.http i framtida projekt för att testa API:er.
 --- Skriv ovanför och ta inte bort denna raden ---
