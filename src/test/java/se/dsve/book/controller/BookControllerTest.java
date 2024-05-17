@@ -15,6 +15,7 @@ import se.dsve.book.service.BookService;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -35,6 +36,18 @@ class BookControllerTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(bookController).build();
+    }
+
+    @Test
+    void test_invalid_id() {
+        Long invalidId = 999L;
+
+        when(bookService.getBookById(invalidId)).thenThrow(new ResourceNotFoundException("Book not found with id " + invalidId));
+
+        assertThrows(
+                ResourceNotFoundException.class,
+                () -> bookController.getBookById(invalidId)
+        );
     }
 
     @Test
