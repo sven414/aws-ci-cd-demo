@@ -1,15 +1,43 @@
 ### Get All Books
+GET http://localhost:8080/api/books
+Content-Type: application/json
 
 ### Add a Book
+POST http://localhost:8080/api/books
+Content-Type: application/json
 
+{
+  "id": 0,
+  "title": "",
+  "author": "",
+  "isbn": ""
+}
 ### Get all books
+GET http://localhost:8080/api/books
+Content-Type: application/json
 
 ### Get a book by id
+GET http://localhost:8080/api/books/{{id}}
+Content-Type: application/json
 
 ### Update a book
+PUT http://localhost:8080/api/books/{{id}}
+Content-Type: application/json
 
+{
+  "title": "New Title",
+  "author": "New Author",
+  "isbn": "New ISBN"
+}
 ### Get a book by id
+GET http://localhost:8080/api/books/{{id}}
+Content-Type: application/json
 
 ### Delete a book
+###
+DELETE http://localhost:8080/api/books/{{id}}
+Content-Type: application/json
 
 ### Get all books
+GET http://localhost:8080/api/books
+Content-Type: application/json
