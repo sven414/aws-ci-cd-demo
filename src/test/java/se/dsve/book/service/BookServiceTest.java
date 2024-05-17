@@ -45,7 +45,7 @@ class BookServiceTest {
 
         Book book = bookService.getBookById(1L).orElse(null);
         assertNotNull(book);
-        assertEquals("Title1", book.getTitle());
+        assertEquals("The Great Gatsby", book.getTitle());
         verify(bookRepository, times(1)).findById(1L);
     }
 
