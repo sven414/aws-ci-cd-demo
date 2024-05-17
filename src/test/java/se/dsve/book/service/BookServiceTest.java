@@ -70,10 +70,17 @@ class BookServiceTest {
     }
 
     @Test
-    void deleteBook() {
-        doNothing().when(bookRepository).deleteById(1L);
+    public void test_delete_existing_book() {
+        // Given
+        Long id = 1L;
+        Book book = new Book();
+        book.setId(id);
+        when(bookRepository.findById(id)).thenReturn(Optional.of(book));
 
-        bookService.deleteBook(1L);
-        verify(bookRepository, times(1)).deleteById(1L);
+        // When
+        bookService.deleteBook(id);
+
+        // Then
+        verify(bookRepository).delete(book);
     }
 }
