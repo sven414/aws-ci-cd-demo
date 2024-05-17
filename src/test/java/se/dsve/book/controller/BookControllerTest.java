@@ -8,6 +8,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import se.dsve.book.exceptions.ResourceNotFoundException;
 import se.dsve.book.model.Book;
 import se.dsve.book.service.BookService;
 
@@ -16,7 +17,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,7 +42,7 @@ class BookControllerTest {
         when(bookService.getAllBooks()).thenReturn(Arrays.asList(new Book(), new Book()));
 
         mockMvc.perform(get("/api/books")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
@@ -50,7 +51,7 @@ class BookControllerTest {
         when(bookService.getBookById(anyLong())).thenReturn(Optional.of(new Book()));
 
         mockMvc.perform(get("/api/books/1")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
@@ -59,8 +60,8 @@ class BookControllerTest {
         when(bookService.addBook(any(Book.class))).thenReturn(new Book());
 
         mockMvc.perform(post("/api/books")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"title\":\"Test Book\",\"author\":\"Test Author\"}"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Test Book\",\"author\":\"Test Author\"}"))
                 .andExpect(status().isOk());
     }
 
@@ -69,15 +70,34 @@ class BookControllerTest {
         when(bookService.updateBook(anyLong(), any(Book.class))).thenReturn(new Book());
 
         mockMvc.perform(put("/api/books/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"title\":\"Updated Test Book\",\"author\":\"Updated Test Author\"}"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Updated Test Book\",\"author\":\"Updated Test Author\"}"))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void deleteBook() throws Exception {
-        mockMvc.perform(delete("/api/books/1")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+    void deleteBookWhenBookExists() {
+        // Given
+        Long id = 1L;
+        doNothing().when(bookService).deleteBook(id);
+
+        // When
+        bookService.deleteBook(id);
+
+        // Then
+        verify(bookService, times(1)).deleteBook(id);
+    }
+
+    @Test
+    void deleteBookWhenBookDoesNotExist() throws Exception {
+        // Given
+        Long id = 1L;
+        doThrow(new ResourceNotFoundException("Book not found with id " + id))
+                .when(bookService).deleteBook(id);
+
+        // When & Then
+        mockMvc.perform(delete("/api/books/" + id)
+                        .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isNotFound());
     }
 }
