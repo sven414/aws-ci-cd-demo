@@ -39,15 +39,14 @@ class BookControllerTest {
     }
 
     @Test
-    void test_invalid_id() {
+    void testInvalidId() throws Exception {
         Long invalidId = 999L;
 
         when(bookService.getBookById(invalidId)).thenThrow(new ResourceNotFoundException("Book not found with id " + invalidId));
 
-        assertThrows(
-                ResourceNotFoundException.class,
-                () -> bookController.getBookById(invalidId)
-        );
+        mockMvc.perform(get("/api/books/" + invalidId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     @Test
