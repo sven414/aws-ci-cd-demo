@@ -37,8 +37,7 @@ public class BookService {
     }
 
     public Book updateBook(Long id, Book bookDetails) {
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id " + id));
+        Book book = getBookOrFail(id);
 
         book.setTitle(bookDetails.getTitle());
         book.setAuthor(bookDetails.getAuthor());
