@@ -25,38 +25,34 @@ public class Book {
     }
 
     public Long getId() {
-        // TODO: Skriv din kod här
-        return null;
+        return this.id;
     }
 
     public void setId(Long id) {
-        // TODO: Skriv din kod här
+        this.id = id;
     }
 
     public String getTitle() {
-        // TODO: Skriv din kod här
-        return null;
+        return this.title;
     }
 
     public void setTitle(String title) {
-        // TODO: Skriv din kod här
+        this.title = title;
     }
 
     public String getAuthor() {
-        // TODO: Skriv din kod här
-        return null;
+        return this.author;
     }
 
     public void setAuthor(String author) {
-        // TODO: Skriv din kod här
+        this.author = author;
     }
 
     public String getIsbn() {
-        // TODO: Skriv din kod här
-        return null;
+        return this.isbn;
     }
 
     public void setIsbn(String isbn) {
-        // TODO: Skriv din kod här
+        this.isbn = isbn;
     }
 }
