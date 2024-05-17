@@ -88,16 +88,15 @@ class BookControllerTest {
     }
 
     @Test
-    void deleteBookWhenBookExists() {
+    void deleteBookWhenBookExists() throws Exception {
         // Given
         Long id = 1L;
         doNothing().when(bookService).deleteBook(id);
 
-        // When
-        bookService.deleteBook(id);
-
-        // Then
-        verify(bookService, times(1)).deleteBook(id);
+        // When & Then
+        mockMvc.perform(delete("/api/books/" + id)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
     }
 
     @Test
@@ -110,6 +109,6 @@ class BookControllerTest {
         // When & Then
         mockMvc.perform(delete("/api/books/" + id)
                         .contentType(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound());
     }
 }
