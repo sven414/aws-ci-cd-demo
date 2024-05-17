@@ -113,6 +113,7 @@ class BookControllerTest {
     }
 
     @Test
+    @Test
     void test_updateBook_bookNotFound() throws Exception {
         Long invalidId = 999L;
         Book bookDetails = new Book();
@@ -128,5 +129,4 @@ class BookControllerTest {
                         .content("{\"title\":\"Updated Title\",\"author\":\"Updated Author\",\"isbn\":\"1234567890\"}"))
                 .andExpect(status().isNotFound());
     }
-
 }
