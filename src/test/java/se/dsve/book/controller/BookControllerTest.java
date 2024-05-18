@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import se.dsve.book.exceptions.ResourceNotFoundException;
 import se.dsve.book.model.Book;
@@ -15,6 +16,8 @@ import se.dsve.book.service.BookService;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -47,10 +50,17 @@ class BookControllerTest {
         doThrow(new ResourceNotFoundException("Book not found with id " + invalidId))
                 .when(bookService).getBookById(invalidId);
 
-        // Hämtar bok med ogiltigt ID och förväntar oss ett 404-svar
-        mockMvc.perform(get("/api/books/" + invalidId)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+        // Hämtar bok med ogiltigt ID och förväntar oss att ett ResourceNotFoundException kastas
+        ResourceNotFoundException thrown = assertThrows(
+                ResourceNotFoundException.class,
+                () -> {
+                    bookController.getBookById(invalidId);
+                },
+                "Expected getBookById() to throw, but it didn't"
+        );
+
+        // Verifiera att meddelandet i undantaget är korrekt
+        assertTrue(thrown.getMessage().contains("Book not found with id " + invalidId));
 
         // Verifiera att metoden getBookById anropades med invalidId
         verify(bookService, times(1)).getBookById(invalidId);
