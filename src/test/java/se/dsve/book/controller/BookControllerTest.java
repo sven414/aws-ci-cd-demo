@@ -17,7 +17,6 @@ import se.dsve.book.service.BookService;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -51,7 +50,7 @@ class BookControllerTest {
         doThrow(new ResourceNotFoundException("Book not found with id " + invalidId))
                 .when(bookService).getBookById(invalidId);
 
-        // Hämtar bok med ogiltigt ID och förväntar oss ett 404-svar
+        // Försöker hämta bok med ogiltigt ID och förväntar oss att ett ResourceNotFoundException kastas
         MvcResult result = mockMvc.perform(get("/api/books/" + invalidId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
