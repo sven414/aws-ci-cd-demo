@@ -5,9 +5,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import se.dsve.book.exceptions.ResourceNotFoundException;
 import se.dsve.book.model.Book;
 import se.dsve.book.service.BookService;
@@ -34,17 +40,20 @@ class BookControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(bookController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(bookController)
+                .setControllerAdvice(new RestExceptionHandler())
+                .build();
     }
 
     @Test
     void testInvalidId() throws Exception {
         Long invalidId = 999L;
 
-        when(bookService.getBookById(invalidId)).thenThrow(new ResourceNotFoundException("Book not found with id " + invalidId));
+        doThrow(new ResourceNotFoundException("Book not found with id " + invalidId))
+                .when(bookService).getBookById(invalidId);
 
         mockMvc.perform(get("/api/books/" + invalidId)
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
@@ -119,11 +128,9 @@ class BookControllerTest {
         bookDetails.setAuthor("Updated Author");
         bookDetails.setIsbn("1234567890");
 
-        // Använd doThrow istället för when(...).thenThrow(...)
         doThrow(new ResourceNotFoundException("Book not found with id " + invalidId))
                 .when(bookService).updateBook(eq(invalidId), any(Book.class));
 
-        // Verifiera att en 404 Not Found status returneras
         mockMvc.perform(put("/api/books/" + invalidId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\":\"Updated Title\",\"author\":\"Updated Author\",\"isbn\":\"1234567890\"}"))
