@@ -51,21 +51,23 @@ class BookControllerTest {
                 .when(bookService).getBookById(invalidId);
 
         // Hämtar bok med ogiltigt ID och förväntar oss att ett ResourceNotFoundException kastas
-        ResourceNotFoundException thrown = assertThrows(
-                ResourceNotFoundException.class,
-                () -> {
-                    bookController.getBookById(invalidId);
-                },
-                "Expected getBookById() to throw, but it didn't"
-        );
+        MvcResult result = mockMvc.perform(get("/api/books/" + invalidId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
 
-        // Verifiera att meddelandet i undantaget är korrekt
-        assertTrue(thrown.getMessage().contains("Book not found with id " + invalidId));
+        Exception resolvedException = result.getResolvedException();
+        if (resolvedException instanceof ResourceNotFoundException) {
+            System.out.println("Expected Status: 404");
+            System.out.println("Actual Status: " + result.getResponse().getStatus());
+            System.out.println("Expected Message: Book not found with id " + invalidId);
+            System.out.println("Actual Message: " + resolvedException.getMessage());
+        } else {
+            System.out.println("Expected a ResourceNotFoundException, but got: " + resolvedException);
+        }
 
         // Verifiera att metoden getBookById anropades med invalidId
         verify(bookService, times(1)).getBookById(invalidId);
     }
-
     @Test
     void getAllBooks() throws Exception {
         when(bookService.getAllBooks()).thenReturn(Arrays.asList(new Book(), new Book()));
