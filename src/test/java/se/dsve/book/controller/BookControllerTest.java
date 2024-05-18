@@ -5,15 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import se.dsve.book.exceptions.ResourceNotFoundException;
 import se.dsve.book.model.Book;
 import se.dsve.book.service.BookService;
@@ -47,14 +41,19 @@ class BookControllerTest {
 
     @Test
     void testInvalidId() throws Exception {
-        Long invalidId = 999L;
+        Long invalidId = 999L; // ogiltigt Book-id
 
+        // Ställer in BookService att kasta undantag när getBookById anropas med invalidId
         doThrow(new ResourceNotFoundException("Book not found with id " + invalidId))
                 .when(bookService).getBookById(invalidId);
 
+        // Hämtar bok med ogiltigt ID och förväntar oss ett 404-svar
         mockMvc.perform(get("/api/books/" + invalidId)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+
+        // Verifiera att metoden getBookById anropades med invalidId
+        verify(bookService, times(1)).getBookById(invalidId);
     }
 
     @Test
