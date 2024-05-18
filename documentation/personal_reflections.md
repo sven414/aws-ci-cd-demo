@@ -25,11 +25,13 @@ Nej, jag följde samma steg som jag brukar göra med undantag för generated-req
 ## Utmaningar och lösningar
 
 ### Vilka utmaningar stötte du på under projektet?
-När jag generade generated-requests.http så hamnade de inte i filen och kom därför inte med i commiten.
+RescourseNotFoundException sttällde till det. Fört missade jag att implementera klassen sedan kastades ändå inte 
+undantaget.
 --- Skriv ovanför och ta inte bort denna raden ---
 
 ### Hur löste du dessa utmaningar?
-Felsökning gav vid handet att det hamnade i en temp-fil. Jag gjorde om requesten och kopierade dem en och en till rätt fil.
+Timmar av felsökning, bombning av ChatGPT och test av alla möjliga lösningar. Till slut fungerade en uppdatering av 
+BookController.
 --- Skriv ovanför och ta inte bort denna raden ---
 
 ## Reflektion och utvärdering

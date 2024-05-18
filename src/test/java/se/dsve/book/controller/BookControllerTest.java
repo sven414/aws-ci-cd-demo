@@ -2,7 +2,6 @@ package se.dsve.book.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.fail;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -17,7 +16,7 @@ import se.dsve.book.service.BookService;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -151,6 +150,9 @@ class BookControllerTest {
         mockMvc.perform(put("/api/books/" + invalidId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\":\"Updated Title\",\"author\":\"Updated Author\",\"isbn\":\"1234567890\"}"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException))
+                .andExpect(result -> assertEquals("Book not found with id " +
+                        invalidId, result.getResolvedException().getMessage()));
     }
 }
