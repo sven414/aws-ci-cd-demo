@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.dsve.book.exceptions.ResourceNotFoundException;
-import se.dsve.book.model.Book;
+import se.dsve.book.model.Books;
 import se.dsve.book.service.BookService;
 
 import java.util.List;
@@ -27,25 +27,25 @@ public class BookController {
     }
 
     @GetMapping
-    public List<Book> getAllBooks() {
+    public List<Books> getAllBooks() {
         return bookService.getAllBooks();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book> getBookById(@PathVariable Long id) {
+    public ResponseEntity<Books> getBookById(@PathVariable Long id) {
         return bookService.getBookById(id)
                 .map(book -> new ResponseEntity<>(book, HttpStatus.OK))
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with id " + id));
     }
 
     @PostMapping
-    public Book addBook(@RequestBody Book book) {
+    public Books addBook(@RequestBody Books book) {
         return bookService.addBook(book);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
-        Book updatedBook = bookService.updateBook(id, bookDetails);
+    public ResponseEntity<Books> updateBook(@PathVariable Long id, @RequestBody Books bookDetails) {
+        Books updatedBook = bookService.updateBook(id, bookDetails);
         return new ResponseEntity<>(updatedBook, HttpStatus.OK);
     }
 

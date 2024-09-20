@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import se.dsve.book.exceptions.ResourceNotFoundException;
-import se.dsve.book.model.Book;
+import se.dsve.book.model.Books;
 import se.dsve.book.repository.BookRepository;
 
 import java.util.Arrays;
@@ -23,8 +22,8 @@ class BookServiceTest {
     @Mock
     BookRepository bookRepository;
 
-    Book book1 = new Book("The Great Gatsby", "F. Scott Fitzgerald", "9780743273565");
-    Book book2 = new Book("To Kill a Mockingbird", "Harper Lee", "9780446310789");
+    Books book1 = new Books("The Great Gatsby", "F. Scott Fitzgerald", "9780743273565");
+    Books book2 = new Books("To Kill a Mockingbird", "Harper Lee", "9780446310789");
 
     @BeforeEach
     void setUp() {
@@ -43,7 +42,7 @@ class BookServiceTest {
     void getBookById() {
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book1));
 
-        Book book = bookService.getBookById(1L).orElse(null);
+        Books book = bookService.getBookById(1L).orElse(null);
         assertNotNull(book);
         assertEquals("The Great Gatsby", book.getTitle());
         verify(bookRepository, times(1)).findById(1L);
@@ -53,7 +52,7 @@ class BookServiceTest {
     void addBook() {
         when(bookRepository.save(book1)).thenReturn(book1);
 
-        Book savedBook = bookService.addBook(book1);
+        Books savedBook = bookService.addBook(book1);
         assertNotNull(savedBook);
         verify(bookRepository, times(1)).save(book1);
     }
@@ -63,7 +62,7 @@ class BookServiceTest {
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book1));
         when(bookRepository.save(book1)).thenReturn(book1);
 
-        Book updatedBook = bookService.updateBook(1L, book1);
+        Books updatedBook = bookService.updateBook(1L, book1);
         assertNotNull(updatedBook);
         verify(bookRepository, times(1)).findById(1L);
         verify(bookRepository, times(1)).save(book1);
@@ -73,7 +72,7 @@ class BookServiceTest {
     public void test_delete_existing_book() {
         // Given
         Long id = 1L;
-        Book book = new Book();
+        Books book = new Books();
         book.setId(id);
         when(bookRepository.findById(id)).thenReturn(Optional.of(book));
 

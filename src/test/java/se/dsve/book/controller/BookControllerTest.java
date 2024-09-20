@@ -10,7 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import se.dsve.book.exceptions.ResourceNotFoundException;
-import se.dsve.book.model.Book;
+import se.dsve.book.model.Books;
 import se.dsve.book.service.BookService;
 
 import java.util.Arrays;
@@ -75,7 +75,7 @@ class BookControllerTest {
 
     @Test
     void getAllBooks() throws Exception {
-        when(bookService.getAllBooks()).thenReturn(Arrays.asList(new Book(), new Book()));
+        when(bookService.getAllBooks()).thenReturn(Arrays.asList(new Books(), new Books()));
 
         mockMvc.perform(get("/api/books")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -84,7 +84,7 @@ class BookControllerTest {
 
     @Test
     void getBookById() throws Exception {
-        when(bookService.getBookById(anyLong())).thenReturn(Optional.of(new Book()));
+        when(bookService.getBookById(anyLong())).thenReturn(Optional.of(new Books()));
 
         mockMvc.perform(get("/api/books/1")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -93,7 +93,7 @@ class BookControllerTest {
 
     @Test
     void addBook() throws Exception {
-        when(bookService.addBook(any(Book.class))).thenReturn(new Book());
+        when(bookService.addBook(any(Books.class))).thenReturn(new Books());
 
         mockMvc.perform(post("/api/books")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -103,7 +103,7 @@ class BookControllerTest {
 
     @Test
     void updateBook() throws Exception {
-        when(bookService.updateBook(anyLong(), any(Book.class))).thenReturn(new Book());
+        when(bookService.updateBook(anyLong(), any(Books.class))).thenReturn(new Books());
 
         mockMvc.perform(put("/api/books/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -139,13 +139,13 @@ class BookControllerTest {
     @Test
     void test_updateBook_bookNotFound() throws Exception {
         Long invalidId = 999L;
-        Book bookDetails = new Book();
+        Books bookDetails = new Books();
         bookDetails.setTitle("Updated Title");
         bookDetails.setAuthor("Updated Author");
         bookDetails.setIsbn("1234567890");
 
         doThrow(new ResourceNotFoundException("Book not found with id " + invalidId))
-                .when(bookService).updateBook(eq(invalidId), any(Book.class));
+                .when(bookService).updateBook(eq(invalidId), any(Books.class));
 
         mockMvc.perform(put("/api/books/" + invalidId)
                         .contentType(MediaType.APPLICATION_JSON)

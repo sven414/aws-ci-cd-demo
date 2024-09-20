@@ -3,7 +3,7 @@ package se.dsve.book.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import se.dsve.book.exceptions.ResourceNotFoundException;
-import se.dsve.book.model.Book;
+import se.dsve.book.model.Books;
 import se.dsve.book.repository.BookRepository;
 
 import java.util.List;
@@ -24,11 +24,11 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
-    public List<Book> getAllBooks() {
+    public List<Books> getAllBooks() {
         return bookRepository.findAll();
     }
 
-    public Optional<Book> getBookById(Long id) {
+    public Optional<Books> getBookById(Long id) {
         try {
             return Optional.of(getBookOrFail(id));
         } catch (ResourceNotFoundException e) {
@@ -36,12 +36,12 @@ public class BookService {
         }
     }
 
-    public Book addBook(Book book) {
+    public Books addBook(Books book) {
         return bookRepository.save(book);
     }
 
-    public Book updateBook(Long id, Book bookDetails) {
-        Book book = getBookOrFail(id);
+    public Books updateBook(Long id, Books bookDetails) {
+        Books book = getBookOrFail(id);
 
         book.setTitle(bookDetails.getTitle());
         book.setAuthor(bookDetails.getAuthor());
@@ -51,11 +51,11 @@ public class BookService {
     }
 
     public void deleteBook(Long id) {
-        Book book = getBookOrFail(id);
+        Books book = getBookOrFail(id);
         bookRepository.delete(book);
     }
 
-    private Book getBookOrFail(Long id) {
+    private Books getBookOrFail(Long id) {
         return bookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with id " + id));
     }
