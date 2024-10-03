@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import se.dsve.book.exceptions.ResourceNotFoundException;
+import se.dsve.book.exceptions.RestExceptionHandler;
 import se.dsve.book.model.Books;
 import se.dsve.book.service.BookService;
 
