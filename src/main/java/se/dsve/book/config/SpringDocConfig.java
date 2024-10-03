@@ -14,6 +14,6 @@ public class SpringDocConfig {
                 .info(new Info()
                         .title("My API")
                         .version("1.0")
-                        .description("API for managing resources"));
+                        .description("API for managing books"));
     }
 }
