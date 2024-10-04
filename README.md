@@ -1,35 +1,62 @@
 # Projekt - Book API
 
-## Förutsättningar
+Projektet hostas på AWS. För detta används tjänsten Elastic Beanstalk som plattform och EC2 som server. I projektet ingår en CI/CD-pipeline som bygger och distribuerar projektet automatiskt vid push eller pull request till main-branchen på GitHub. Översikt:
 
-Att ni installerat relevanta programvaror och verktyg som används i kursen.
+![Pipeline](images/pipe.png)
 
-## Kravspecifikation
+Pipelinen startas av en GitHub App som meddelar AWS CodePipeline när en ny push eller pull request har skett i repot. CodePipeline hämtar sedan koden från GitHub-repot, bygger projektet, paketerar det och distribuerar det till en Elastic Beanstalk-miljö på AWS som gör programmet tillgängligt via HTTP. För att fungera behöver byggprocessen en service-roll som jag givit följande Permission policies:
 
-För att projektet ska bli godkänt ska följande krav i filen [requirements.md](requirements.md)
-vara uppfyllda.
+* AWSCodeBuildDeveloperAccess
+* CodeBuild-CloudWatchLogs-Access-Policy
+* CodeBuildBasePolicy-bookApiBuild-eu-north-1
+* CodeBuildCodeConnectionsSourceCredentialsPolicy-bookApiBuild-eu-north-1
 
-## Rättning
+Den andra policyn har jag fåt skriva själv:
+```JSON
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "VisualEditor0",
+			"Effect": "Allow",
+			"Action": [
+				"logs:CreateLogStream",
+				"logs:PutLogEvents"
+			],
+			"Resource": "arn:aws:logs:eu-north-1:273354644831:log-group:/aws/codebuild/*:log-stream:*"
+		},
+		{
+			"Sid": "VisualEditor1",
+			"Effect": "Allow",
+			"Action": "logs:CreateLogGroup",
+			"Resource": "arn:aws:logs:eu-north-1:273354644831:log-group:/aws/codebuild/*"
+		}
+	]
+}
+```
+Policyn ger skrivbehörighet till loggrupper och logstreams för CodeBuild. Utan den är det nästan omöjligt att felsöka.
 
-- Rättning kommer ske automatiskt i pipelinen.
-- Ni ska lämna in en inlämningsrapport i en markdown fil som
-  heter [`personal_reflections.md`](documentation/personal_reflections.md) i mappen `documentation`.
-
-## Sista inlämningstid
-
-Lämna in uppgiften senast den `2024-05-20` kl. `23:59:59`.
-
-* Ni kan göra färdigt er uppgift efter deadline men ni hamnar sist i prioritering med att rättas.
-* Om ni inte lämnar in något alls får ni IG på er inlämning.
-* Om ni inte lämnar in i tid är högsta möjliga betyg G.
-* Inlämningar ska ske via SchoolHub´s plattform på [gitlab.dsve.se](https://gitlab.dsve.se/)
-
-## Frågor
-
-Återkom till utbildaren via Google Meet/Teams/Discord eller maila mig på `marmed02@gafe.molndal.se`.
-
-_OBS! Är det frågor som fler än du själv har nytta av att få svar på, använd er av Discord kanalen för frågor och svar._
-
-## Licens
-
-Licensen finns i filen [LICENSE.md](LICENSE).
+Byggskriptet i CodeBuild ser ut så här (med förklarande kommentarer:
+```yaml
+version: 0.2
+phases:
+  install: # Installationsfasen sätter upp miljön
+    runtime-versions:
+      java: corretto21 # Anger JDK till Corretto 21
+  pre_build: #fas före själva bygget, används inte här, skriver bara ut ett meddelande
+    commands:
+      - echo Nothing to do in the pre_build phase... 
+      build: #byggfasten
+    commands:
+      - echo Build started on {date} # Meddelande om datum 
+      - mvn install # Kör Maven-installationen
+      - mvn clean package # 
+  post_build: #Efterbyggsfasen, används inte här, skriver bara ut ett meddelande
+    commands:
+      - echo Build completed on {date}
+artifacts:
+  files:
+    - target/*.jar # Anger att jar-filen ska skickas till Elastic Beanstalk
+  discard-paths: yes # Tar bort sökvägen till jar-filen
+```
+Programmet använder en MySQL-databas i AWS RDS. Inloggningen sker med miljövariabler som ligger i IntelliJ, på GitHub och i Elastic Beanstalk-miljön.
